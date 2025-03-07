@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Article Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        #searchForm {
+            margin-bottom: 20px;
+        }
+        #searchInput {
+            width: 70%;
+            padding: 10px;
+        }
+        #searchButton {
+            padding: 10px 20px;
+        }
+        .result {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .result h3 {
+            margin-top: 0;
+        }
+        #loading {
+            display: none;
+        }
+        .source-section {
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Medical Article Search</h1>
+    <form id="searchForm">
+        <input type="text" id="searchInput" placeholder="Enter your search query">
+        <button type="submit" id="searchButton">Search</button>
+    </form>
+    <div id="loading">Searching...</div>
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+
+            loading.style.display = 'block';
+            results.innerHTML = '';
+
+            fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: query }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                loading.style.display = 'none';
+                displayResults(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                loading.style.display = 'none';
+                results.innerHTML = 'An error occurred while searching.';
+            });
+        });
+
+        function displayResults(data) {
+    const results = document.getElementById('results');
+    results.innerHTML = '';
+
+    if (data.length === 0) {
+        results.innerHTML = 'No results found.';
+        return;
+    }
+
+    data.forEach(article => {
+        const articleDiv = document.createElement('div');
+        articleDiv.className = 'result';
+
+        // Create and display the ID
+        const idElement = document.createElement('h3');
+        idElement.textContent = `ID: ${article.id}`;
+        articleDiv.appendChild(idElement);
+
+      
+
+        // Create and display the link to the PDF
+        const link = document.createElement('a');
+        link.href = article.pdf_url;
+        link.textContent = 'View PDF';
+        link.target = '_blank';
+        articleDiv.appendChild(link);
+
+        // Append the articleDiv to the results container
+        results.appendChild(articleDiv);
+    });
+}
+
+    </script>
+</body>
+</html>

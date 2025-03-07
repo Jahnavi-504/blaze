@@ -1,0 +1,16 @@
+Flask
+flask-cors
+torch
+transformers
+psycopg2-binary
+numpy
+pandas
+scipy
+gunicorn
+tqdm
+sentencepiece
+protobuf
+rank-bm25
+pydantic
+requests
+python-dotenv
